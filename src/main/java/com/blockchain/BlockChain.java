@@ -61,11 +61,11 @@ public class BlockChain {
     }
 
     public void addBlock(Block newBlock) {
-        newBlock.mineBlock(this.difficulty);
-        this.blockchain.add(newBlock);
+        newBlock.mineBlock(difficulty);
+        blockchain.add(newBlock);
     }
 
     public String getLastBlockHash() {
-        return this.blockchain.get(this.blockchain.size() - 1).hash;
+        return blockchain.get(blockchain.size() - 1).hash;
     }
 }

@@ -9,7 +9,7 @@ import org.springframework.boot.autoconfigure.SpringBootApplication;
 @SpringBootApplication
 public class SimpleBlockChainWithJavaApplication {
 
-    public static Integer DIFFICULTY = 5;
+    public static Integer DIFFICULTY = 1;
 
     public static void main(String[] args) {
         SpringApplication.run(SimpleBlockChainWithJavaApplication.class, args);

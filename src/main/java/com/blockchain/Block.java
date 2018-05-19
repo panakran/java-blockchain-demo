@@ -24,6 +24,7 @@ public class Block {
         StringBuilder stringToApplySha256 = new StringBuilder();
         stringToApplySha256.append(previousHash)
                 .append(Long.toString(timeStamp))
+                .append(Integer.toString(nonce))
                 .append(data);
         String calculatedhash = StringUtil.applySha256(stringToApplySha256.toString());
         return calculatedhash;
