@@ -1,6 +1,6 @@
 package com.blockchain.Utilities;
 
-import com.blockchain.Transaction;
+import com.blockchain.transactions.Transaction;
 import java.security.MessageDigest;
 
 import com.google.gson.GsonBuilder;

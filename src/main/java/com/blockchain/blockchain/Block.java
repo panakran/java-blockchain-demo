@@ -1,5 +1,6 @@
-package com.blockchain;
+package com.blockchain.blockchain;
 
+import com.blockchain.transactions.Transaction;
 import com.blockchain.Utilities.StringUtil;
 import java.util.ArrayList;
 import java.util.Date;
@@ -9,7 +10,7 @@ public class Block {
     public String hash;
     public String previousHash;
     public String merkleRoot;
-    public ArrayList<Transaction> transactions = new ArrayList<Transaction>(); //our data will be a simple message.
+    public ArrayList<Transaction> transactions = new ArrayList<>(); //our data will be a simple message.
     public long timeStamp; //as number of milliseconds since 1/1/1970.
     public int nonce;
 
@@ -23,12 +24,16 @@ public class Block {
 
     //Calculate new hash based on blocks contents
     public String calculateHash() {
-        String calculatedhash = StringUtil.applySha256(
-                previousHash
-                + Long.toString(timeStamp)
-                + Integer.toString(nonce)
-                + merkleRoot
-        );
+        StringBuilder concatenatedString = new StringBuilder();
+        String data = concatenatedString
+                .append(previousHash)
+                .append(Long.toString(timeStamp))
+                .append(Integer.toString(nonce))
+                .append(merkleRoot)
+                .toString();
+
+        String calculatedhash = StringUtil.applySha256(data);
+
         return calculatedhash;
     }
 
@@ -49,8 +54,8 @@ public class Block {
         if (transaction == null) {
             return false;
         }
-        if ((previousHash != "0")) {
-            if ((transaction.processTransaction() != true)) {
+        if (!previousHash.equals("0")) {
+            if ((!transaction.processTransaction())) {
                 System.out.println("Transaction failed to process. Discarded.");
                 return false;
             }

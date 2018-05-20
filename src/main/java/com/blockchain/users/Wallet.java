@@ -1,5 +1,9 @@
-package com.blockchain;
+package com.blockchain.users;
 
+import com.blockchain.blockchain.BlockChain;
+import com.blockchain.transactions.TransactionInput;
+import com.blockchain.transactions.TransactionOutput;
+import com.blockchain.transactions.Transaction;
 import java.security.KeyPair;
 import java.security.KeyPairGenerator;
 import java.security.PrivateKey;
@@ -75,9 +79,7 @@ public class Wallet {
         Transaction newTransaction = new Transaction(publicKey, _recipient, value, inputs);
         newTransaction.generateSignature(privateKey);
 
-        for (TransactionInput input : inputs) {
-            UTXOs.remove(input.transactionOutputId);
-        }
+        inputs.forEach(input->UTXOs.remove(input.transactionOutputId));
         return newTransaction;
     }
 }

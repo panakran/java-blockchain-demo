@@ -1,14 +1,10 @@
-/*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
- */
-package com.blockchain;
+package com.blockchain.transactions;
 
 /**
  *
  * @author panos_kr
  */
+import com.blockchain.blockchain.BlockChain;
 import com.blockchain.Utilities.StringUtil;
 import java.security.*;
 import java.util.ArrayList;
@@ -37,38 +33,46 @@ public class Transaction {
     // This Calculates the transaction hash (which will be used as its Id)
     private String calulateHash() {
         sequence++; //increase the sequence to avoid 2 identical transactions having the same hash
-        return StringUtil.applySha256(
-                StringUtil.getStringFromKey(sender)
-                + StringUtil.getStringFromKey(reciepient)
-                + Float.toString(value) + sequence
-        );
+        StringBuilder concatString = new StringBuilder();
+        concatString
+                .append(StringUtil.getStringFromKey(sender))
+                .append(StringUtil.getStringFromKey(reciepient))
+                .append(Float.toString(value).concat(String.valueOf(sequence)));
+        return StringUtil.applySha256(concatString.toString());
     }
 
     //Signs all the data we dont wish to be tampered with.
     public void generateSignature(PrivateKey privateKey) {
-        String data = StringUtil.getStringFromKey(sender) + StringUtil.getStringFromKey(reciepient) + Float.toString(value);
+        StringBuilder concatString = new StringBuilder();
+        String data = concatString
+                .append(StringUtil.getStringFromKey(sender))
+                .append(StringUtil.getStringFromKey(reciepient))
+                .append(Float.toString(value))
+                .toString();
         signature = StringUtil.applyECDSASig(privateKey, data);
     }
 //Verifies the data we signed hasnt been tampered with
 
-    public boolean verifiySignature() {
-        String data = StringUtil.getStringFromKey(sender) + StringUtil.getStringFromKey(reciepient) + Float.toString(value);
+    public boolean verifySignature() {
+        StringBuilder concatString = new StringBuilder();
+        String data = concatString
+                .append(StringUtil.getStringFromKey(sender))
+                .append(StringUtil.getStringFromKey(reciepient))
+                .append(Float.toString(value))
+                .toString();
         return StringUtil.verifyECDSASig(sender, data, signature);
     }
 
     //Returns true if new transaction could be created.	
     public boolean processTransaction() {
 
-        if (verifiySignature() == false) {
+        if (!verifySignature()) {
             System.out.println("#Transaction Signature failed to verify");
             return false;
         }
+        inputs.forEach(i -> i.UTXO = BlockChain.UTXOs.get(i.transactionOutputId));
 
         //gather transaction inputs (Make sure they are unspent):
-        for (TransactionInput i : inputs) {
-            i.UTXO = BlockChain.UTXOs.get(i.transactionOutputId);
-        }
-
         //check if transaction is valid:
         if (getInputsValue() < BlockChain.minimumTransaction) {
             System.out.println("#Transaction Inputs to small: " + getInputsValue());
@@ -82,17 +86,12 @@ public class Transaction {
         outputs.add(new TransactionOutput(this.sender, leftOver, transactionId)); //send the left over 'change' back to sender		
 
         //add outputs to Unspent list
-        for (TransactionOutput o : outputs) {
-            BlockChain.UTXOs.put(o.id, o);
-        }
+        outputs.forEach(o -> BlockChain.UTXOs.put(o.id, o));
 
         //remove transaction inputs from UTXO lists as spent:
-        for (TransactionInput i : inputs) {
-            if (i.UTXO == null) {
-                continue; //if Transaction can't be found skip it 
-            }
-            BlockChain.UTXOs.remove(i.UTXO.id);
-        }
+        inputs.stream()
+                .filter(i -> i.UTXO != null)
+                .forEach(i -> BlockChain.UTXOs.remove(i.UTXO.id));
 
         return true;
     }
@@ -100,21 +99,17 @@ public class Transaction {
 //returns sum of inputs(UTXOs) values
     public float getInputsValue() {
         float total = 0;
-        for (TransactionInput i : inputs) {
-            if (i.UTXO == null) {
-                continue; //if Transaction can't be found skip it 
-            }
-            total += i.UTXO.value;
-        }
-        return total;
+        return inputs.stream()
+                .filter(i -> i.UTXO != null)
+                .map(i -> i.UTXO.value)
+                .reduce(total, (x, y) -> x + y);
     }
 
 //returns sum of outputs:
     public float getOutputsValue() {
         float total = 0;
-        for (TransactionOutput o : outputs) {
-            total += o.value;
-        }
-        return total;
+        return outputs.stream()
+                .map(o -> o.value)
+                .reduce(total, (x, y) -> x + y);
     }
 }

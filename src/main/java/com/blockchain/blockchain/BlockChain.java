@@ -1,5 +1,9 @@
-package com.blockchain;
+package com.blockchain.blockchain;
 
+import com.blockchain.users.User;
+import com.blockchain.transactions.TransactionInput;
+import com.blockchain.transactions.TransactionOutput;
+import com.blockchain.transactions.Transaction;
 import java.util.ArrayList;
 import java.util.HashMap;
 
@@ -11,9 +15,10 @@ public class BlockChain {
 
     public ArrayList<Block> blockchain = new ArrayList<>();
     public Integer difficulty = 5;
-    public static HashMap<String, TransactionOutput> UTXOs = new HashMap<String, TransactionOutput>(); //list of all unspent transactions. 
+    public static HashMap<String, TransactionOutput> UTXOs = new HashMap<>(); //list of all unspent transactions. 
     public static float minimumTransaction = 0.1f;
     public static Transaction genesisTransaction;
+    public ArrayList<User> userList = new ArrayList<>();
 
     public BlockChain(Integer difficulty) {
         this.difficulty = difficulty;
@@ -39,7 +44,7 @@ public class BlockChain {
         Block currentBlock;
         Block previousBlock;
         String hashTarget = new String(new char[difficulty]).replace('\0', '0');
-        HashMap<String, TransactionOutput> tempUTXOs = new HashMap<String, TransactionOutput>(); //a temporary working list of unspent transactions at a given block state.
+        HashMap<String, TransactionOutput> tempUTXOs = new HashMap<>(); //a temporary working list of unspent transactions at a given block state.
         tempUTXOs.put(genesisTransaction.outputs.get(0).id, genesisTransaction.outputs.get(0));
 
         //loop through blockchain to check hashes:
@@ -68,7 +73,7 @@ public class BlockChain {
             for (int t = 0; t < currentBlock.transactions.size(); t++) {
                 Transaction currentTransaction = currentBlock.transactions.get(t);
 
-                if (!currentTransaction.verifiySignature()) {
+                if (!currentTransaction.verifySignature()) {
                     System.out.println("#Signature on Transaction(" + t + ") is Invalid");
                     return false;
                 }
@@ -93,15 +98,13 @@ public class BlockChain {
                     tempUTXOs.remove(input.transactionOutputId);
                 }
 
-                for (TransactionOutput output : currentTransaction.outputs) {
-                    tempUTXOs.put(output.id, output);
-                }
+                currentTransaction.outputs.forEach((output) -> tempUTXOs.put(output.id, output));
 
-                if (currentTransaction.outputs.get(0).reciepient != currentTransaction.reciepient) {
+                if (currentTransaction.outputs.get(0).recipient != currentTransaction.reciepient) {
                     System.out.println("#Transaction(" + t + ") output reciepient is not who it should be");
                     return false;
                 }
-                if (currentTransaction.outputs.get(1).reciepient != currentTransaction.sender) {
+                if (currentTransaction.outputs.get(1).recipient != currentTransaction.sender) {
                     System.out.println("#Transaction(" + t + ") output 'change' is not sender.");
                     return false;
                 }
@@ -121,4 +124,13 @@ public class BlockChain {
     public String getLastBlockHash() {
         return blockchain.get(blockchain.size() - 1).hash;
     }
+
+    public ArrayList<User> getUserList() {
+        return userList;
+    }
+
+    public void setUserList(ArrayList<User> userList) {
+        this.userList = userList;
+    }
+
 }

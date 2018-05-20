@@ -1,4 +1,4 @@
-package com.blockchain;
+package com.blockchain.transactions;
 
 /**
  *
