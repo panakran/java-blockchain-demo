@@ -1,5 +1,6 @@
 package com.blockchain.blockchain;
 
+import static com.blockchain.simpleBlockChainWithJava.SimpleBlockChainWithJavaApplication.blockChain;
 import com.blockchain.users.User;
 import com.blockchain.transactions.TransactionInput;
 import com.blockchain.transactions.TransactionOutput;
@@ -131,6 +132,18 @@ public class BlockChain {
 
     public void setUserList(ArrayList<User> userList) {
         this.userList = userList;
+    }
+    
+    public User getUserByUsername(String username){
+        System.out.println("1"+username);
+        User u=  userList
+                .stream()
+                .filter(user -> user.getUsername().equals(username))
+                .findFirst()
+                .get();
+        System.out.println("2"+u);
+        
+        return u;
     }
 
 }
