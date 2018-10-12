@@ -7,55 +7,17 @@ and open the template in the editor.
 <html>
     <head>
         <title>BC DEMO</title>
-        <link href="node_modules/bootstrap/dist/css/bootstrap.css" rel="stylesheet">
+        <link rel="stylesheet" type="text/css" href="node_modules/bootstrap/dist/css/bootstrap.css">
         <meta charset="UTF-8">
         <meta name="viewport" content="width=device-width, initial-scale=1.0">
-        <script src="node_modules/angular/angular.js"></script>
-        <script src="node_modules/jquery/dist/jquery.js"></script>
-        <script src="node_modules/bootstrap/dist/js/bootstrap.js"></script>
+        <script type="text/javascript" src="node_modules/angular/angular.js"></script>
         <script type="text/javascript" src="js/demo.js"></script>
     </head>
     <body ng-app="app" ng-controller="Ctrl">
         <div class="container">
             <h1>Blockchain demo
             </h1>
-            <div>
-                <button ng-click="getBlockchain()">get blockchain</button>
-                <button ng-click="getUsers()">get users</button>
-            </div>
-            <div class="col-md-6">
-                <div ng-repeat="block in blockchain">
-                    <div class="panel panel-info">
-                        <div class="panel-heading">
-                            <span>HASH::{{block.hash}}</span>
-                            <span>PREVIOUS HASH::{{block.previousHash}}</span>
-                        </div>
-                        <div class="panel-body">
-                            {{block.merkleRoot}}<br>
-                        </div>
-                        <div class="panel-footer">
-                            {{block.timeStamp}}<br>
-                            {{block.nonce}}<br>
-                        </div>
-                    </div>
-                </div>
-            </div>
-            <div class="col-md-6">
-                <div ng-repeat="user in users">
-                    <div class="panel panel-info">
-                        <div class="panel-heading">
-                            <span>ID::{{user.id}}</span>
-                            <span>USERNAME::{{user.username}}</span>
-                        </div>
-                        <div class="panel-body">
-                            {{user.wallet.UTXOs}}<br>
-                        </div>
-                        <div class="panel-footer">
-                        </div>
-                    </div>
-                </div>
-            </div>
+            {{test}}
         </div>
-
     </body>
 </html>

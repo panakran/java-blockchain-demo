@@ -22,6 +22,7 @@ public class BlockChainController {
 
     @RequestMapping(path = "/blockchain", produces = MediaType.APPLICATION_JSON_VALUE, method = RequestMethod.GET)
     public String blockchain() {
+
         System.out.println("BLOCKCHAIN VALIDATION::" + (blockChain.isChainValid() ? "VALID" : "INVALID"));
         return StringUtil.getJson(blockChain.getBlockchain());
     }
@@ -66,9 +67,9 @@ public class BlockChainController {
         return StringUtil.getJson(blockChain.getUserList());
     }
 
-    @RequestMapping(path = "/getusers", produces = MediaType.APPLICATION_JSON_VALUE, method = RequestMethod.GET)
-    public String getUsers() {
-        return StringUtil.getJson(blockChain.getUserList());
+    @RequestMapping(path = "/getuser", produces = MediaType.APPLICATION_JSON_VALUE, method = RequestMethod.POST)
+    public String getUser(@RequestParam String username) {
+        return StringUtil.getJson(blockChain.getUserByUsername(username));
     }
 
 }
