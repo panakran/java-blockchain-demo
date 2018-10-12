@@ -10,8 +10,6 @@ import java.security.PublicKey;
 import java.security.Signature;
 import java.util.ArrayList;
 import java.util.Base64;
-import java.util.List;
-import static java.util.stream.Collectors.toList;
 
 public class StringUtil {
 
@@ -81,14 +79,15 @@ public class StringUtil {
         return Base64.getEncoder().encodeToString(key.getEncoded());
     }
 
-    public static String getMerkleRoot(List<Transaction> transactions) {
+    public static String getMerkleRoot(ArrayList<Transaction> transactions) {
         int count = transactions.size();
-        List<String> previousTreeLayer = transactions.stream().map(transaction->transaction.transactionId).collect(toList());
-
-        List<String> treeLayer = previousTreeLayer;
+        ArrayList<String> previousTreeLayer = new ArrayList<>();
+        for (Transaction transaction : transactions) {
+            previousTreeLayer.add(transaction.transactionId);
+        }
+        ArrayList<String> treeLayer = previousTreeLayer;
         while (count > 1) {
             treeLayer = new ArrayList<>();
-            //FIXME: possoble usage of guava map with stream
             for (int i = 1; i < previousTreeLayer.size(); i++) {
                 treeLayer.add(applySha256(previousTreeLayer.get(i - 1) + previousTreeLayer.get(i)));
             }

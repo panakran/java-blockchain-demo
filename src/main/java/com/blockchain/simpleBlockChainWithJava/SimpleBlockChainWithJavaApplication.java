@@ -12,8 +12,9 @@ import org.springframework.boot.autoconfigure.SpringBootApplication;
 @SpringBootApplication
 public class SimpleBlockChainWithJavaApplication {
 
-    public static Integer DIFFICULTY = 5;
-    public static Wallet coinbase;
+    public static Integer DIFFICULTY = 4;
+    public static Wallet walletA;
+    public static Wallet walletB;
     public static Block genesis;
     public static BlockChain blockChain;
 
@@ -24,10 +25,12 @@ public class SimpleBlockChainWithJavaApplication {
         Security.addProvider(new org.bouncycastle.jce.provider.BouncyCastleProvider()); //Setup Bouncey castle as a Security Provider
 
         //Create wallets:
-        coinbase = new Wallet();
+        walletA = new Wallet();
+        walletB = new Wallet();
+        Wallet coinbase = new Wallet();
 
-        //create genesis transaction, which sends 10000 coins to coinbase: 
-        BlockChain.genesisTransaction = new Transaction(coinbase.publicKey, coinbase.publicKey, 10000, null);
+        //create genesis transaction, which sends 100 coins to walletA: 
+        BlockChain.genesisTransaction = new Transaction(coinbase.publicKey, walletA.publicKey, 100f, null);
         BlockChain.genesisTransaction.generateSignature(coinbase.privateKey);	 //manually sign the genesis transaction	
         BlockChain.genesisTransaction.transactionId = "0"; //manually set the transaction id
         BlockChain.genesisTransaction.outputs.add(new TransactionOutput(BlockChain.genesisTransaction.reciepient, BlockChain.genesisTransaction.value, BlockChain.genesisTransaction.transactionId)); //manually add the Transactions Output
@@ -37,8 +40,6 @@ public class SimpleBlockChainWithJavaApplication {
         genesis = new Block("0");
         genesis.addTransaction(BlockChain.genesisTransaction);
         blockChain.addBlock(genesis);
-
-
     }
 
 }
